@@ -1,0 +1,8 @@
+out
+dist
+node_modules
+.vscode-test/
+*.vsix
+pair-ls
+pair-ls.exe
+yarn-error.log

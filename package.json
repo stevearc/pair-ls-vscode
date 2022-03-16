@@ -1,0 +1,93 @@
+{
+  "name": "pair-ls",
+  "displayName": "pair-ls",
+  "description": "Remote read-only pair programming",
+  "repository": "https://github.com/stevearc/pair-ls-vscode",
+  "version": "0.1.0",
+  "pair_ls_version": "v0.1.1",
+  "publisher": "pair-ls",
+  "license": "MIT",
+  "keywords": [
+    "pair",
+    "programming",
+    "remote",
+    "pairing"
+  ],
+  "engines": {
+    "vscode": "^1.64.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:pair-ls.start",
+    "onCommand:pair-ls.stop",
+    "onCommand:pair-ls.createToken",
+    "onCommand:pair-ls.connectToken"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pair-ls.start",
+        "title": "Pair-ls: Start"
+      },
+      {
+        "command": "pair-ls.stop",
+        "title": "Pair-ls: Stop"
+      },
+      {
+        "command": "pair-ls.createToken",
+        "title": "Pair-ls: Create share url"
+      },
+      {
+        "command": "pair-ls.connectToken",
+        "title": "Pair-ls: Connect with token"
+      }
+    ],
+    "configuration": {
+      "title": "Pair-ls",
+      "properties": {
+        "pair-ls.executable": {
+          "type": "string",
+          "description": "Path to the pair-ls executable"
+        },
+        "pair-ls.flags": {
+          "type": "string",
+          "default": "lsp -port 8080",
+          "description": "Command line flags to pass to pair-ls"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.0",
+    "@types/node": "14.x",
+    "@types/vscode": "^1.64.0",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
+    "@vscode/test-electron": "^2.1.2",
+    "eslint": "^8.9.0",
+    "glob": "^7.2.0",
+    "mocha": "^9.2.1",
+    "ts-loader": "^9.2.6",
+    "typescript": "^4.5.5",
+    "webpack": "^5.69.1",
+    "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^7.0.0"
+  }
+}
