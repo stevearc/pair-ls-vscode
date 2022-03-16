@@ -99,11 +99,13 @@ function startCommand(_context: vscode.ExtensionContext): Promise<void> {
     vscode.window.showErrorMessage("Pair-ls is already running");
     return Promise.resolve();
   }
-  // FIXME allow configuration
-  const binary = "pair-ls";
-  const flags = ["-loglevel", "5", "lsp", "-port", "8080"];
+  const config = vscode.workspace.getConfiguration("pair-ls");
+  const exe = config.get<string>("executable", "pair-ls");
+  const flags = config.get<string[]>("flags");
+  console.log(exe);
+  console.log(flags);
   const serverOptions: ServerOptions = {
-    command: binary,
+    command: exe,
     args: flags,
   };
 
@@ -140,7 +142,9 @@ function stopCommand(_context: vscode.ExtensionContext) {
     vscode.window.showErrorMessage("Pair-ls is not running");
     return;
   }
-  client.stop();
+  client.stop().then(() => {
+    vscode.window.showInformationMessage("Pair-ls stopped");
+  });
   client = null;
 }
 
@@ -150,10 +154,10 @@ async function createTokenCommand(context: vscode.ExtensionContext) {
     "experimental/connectToPeer",
     {}
   );
+  await vscode.env.clipboard.writeText(response.url);
   vscode.window.showInformationMessage(
     "Pair-ls: Sharing url copied to clipboard"
   );
-  vscode.env.clipboard.writeText(response.url);
 }
 
 async function connectTokenCommand(context: vscode.ExtensionContext) {
@@ -172,10 +176,10 @@ async function connectTokenCommand(context: vscode.ExtensionContext) {
     { token }
   );
   if (response != null) {
+    await vscode.env.clipboard.writeText(response.token);
     vscode.window.showInformationMessage(
       "Pair-ls: Sharing token copied to clipboard"
     );
-    vscode.env.clipboard.writeText(response.token);
   }
 }
 

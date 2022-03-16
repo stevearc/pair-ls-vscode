@@ -34,7 +34,29 @@
         "command": "pair-ls.connectToken",
         "title": "Pair-ls: Connect with token"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Pair-ls",
+      "properties": {
+        "pair-ls.executable": {
+          "type": "string",
+          "default": "pair-ls",
+          "description": "Path to the pair-ls executable"
+        },
+        "pair-ls.flags": {
+          "type": "array",
+          "default": [
+            "lsp",
+            "-port",
+            "8080"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Command line flags to pass to pair-ls"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "yarn run package",
