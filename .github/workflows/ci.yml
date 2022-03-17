@@ -12,6 +12,8 @@ jobs:
   test:
     name: Lint and test
     runs-on: ubuntu-latest
+    outputs:
+      pair_ls_version: ${{ steps.version.outputs.value }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -25,6 +27,11 @@ jobs:
         uses: GabrielBB/xvfb-action@v1
         with:
           run: yarn test
+      - name: Extract pair-ls version from package.json
+        uses: sergeysova/jq-action@v2
+        id: version
+        with:
+          cmd: "jq .pair_ls_version package.json -r"
   build:
     name: Build
     needs: test
@@ -53,17 +60,10 @@ jobs:
           node-version: "16"
           cache: "yarn"
       - run: yarn install
-      - name: Extract pair-ls version from package.json
-        uses: sergeysova/jq-action@v2
-        id: version
-        with:
-          cmd: "jq .pair_ls_version package.json -r"
-      - name: Show my version
-        run: 'echo "version ${{ steps.version.outputs.value }}"'
       - name: Download pair-ls
         uses: suisei-cn/actions-download-file@v1
         with:
-          url: https://github.com/stevearc/pair-ls/releases/download/${{ steps.version.outputs.value }}/${{ matrix.bin }}
+          url: https://github.com/stevearc/pair-ls/releases/download/${{ needs.test.outputs.pair_ls_version }}/${{ matrix.bin }}
       - shell: pwsh
         run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
       - run: npx vsce package --target ${{ env.target }}
