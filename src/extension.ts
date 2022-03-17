@@ -1,4 +1,6 @@
 import * as vscode from "vscode";
+import { platform } from "process";
+import * as path from "path";
 import {
   BaseLanguageClient,
   ClientCapabilities,
@@ -96,13 +98,17 @@ function sendCursorPosition() {
   client.sendNotification("experimental/cursor", params);
 }
 
-function startCommand(_context: vscode.ExtensionContext): Promise<void> {
+async function startCommand(context: vscode.ExtensionContext): Promise<void> {
   if (client != null) {
     vscode.window.showErrorMessage("Pair-ls is already running");
-    return Promise.resolve();
+    return;
   }
   const config = vscode.workspace.getConfiguration("pair-ls");
-  const exe = config.get<string>("executable", "pair-ls");
+  let dist = path.join(context.extension.extensionPath, "pair-ls");
+  if (platform === "win32") {
+    dist = dist + ".exe";
+  }
+  const exe = config.get<string>("executable", dist);
   const flags = config
     .get<string>("flags", "lsp")
     .split(" ")
@@ -125,7 +131,8 @@ function startCommand(_context: vscode.ExtensionContext): Promise<void> {
   client.registerFeature(new CursorFeature(client));
 
   client.start();
-  return client.onReady().then(sendCursorPosition);
+  await client.onReady();
+  sendCursorPosition();
 }
 
 async function getOrStartClient(

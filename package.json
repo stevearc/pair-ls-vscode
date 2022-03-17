@@ -2,7 +2,9 @@
   "name": "pair-ls",
   "displayName": "pair-ls",
   "description": "Remote read-only pair programming",
+  "repository": "https://github.com/stevearc/pair-ls-vscode",
   "version": "0.0.1",
+  "pair_ls_version": "nightly",
   "engines": {
     "vscode": "^1.64.0"
   },
@@ -40,7 +42,6 @@
       "properties": {
         "pair-ls.executable": {
           "type": "string",
-          "default": "pair-ls",
           "description": "Path to the pair-ls executable"
         },
         "pair-ls.flags": {
@@ -66,7 +67,7 @@
     "@types/glob": "^7.2.0",
     "@types/mocha": "^9.1.0",
     "@types/node": "14.x",
-    "@types/vscode": "^1.65.0",
+    "@types/vscode": "^1.64.0",
     "@typescript-eslint/eslint-plugin": "^5.12.1",
     "@typescript-eslint/parser": "^5.12.1",
     "@vscode/test-electron": "^2.1.2",

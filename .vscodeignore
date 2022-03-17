@@ -5,9 +5,11 @@ node_modules/**
 src/**
 .gitignore
 .yarnrc
+yarn-error.log
 webpack.config.js
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
 **/*.map
 **/*.ts
+vsce.sh
