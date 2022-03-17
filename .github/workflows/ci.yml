@@ -57,14 +57,10 @@ jobs:
           cmd: "jq .pair_ls_version package.json -r"
       - name: Show my version
         run: 'echo "version ${{ steps.version.outputs.value }}"'
-      - name: Download pair-ls on windows
-        if: matrix.platform == "win32"
+      - name: Download pair-ls
         uses: suisei-cn/actions-download-file@v1
         with:
           url: https://github.com/stevearc/pair-ls/releases/download/${{ steps.version.outputs.value }}/${{ matrix.bin }}
-      - name: Download pair-ls on mac/linux
-        if: matrix.platform != "win32"
-        run: "curl https://github.com/stevearc/pair-ls/releases/download/${{ steps.version.outputs.value }}/${{ matrix.bin }} -o pair-ls"
       - shell: pwsh
         run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
       - run: yarn vsce package --target ${{ env.target }}
