@@ -4,16 +4,23 @@ import {
   ClientCapabilities,
   LanguageClient,
   LanguageClientOptions,
+  Position,
   ServerOptions,
   StaticFeature,
   Range,
-  TextDocumentPositionParams,
+  TextDocumentIdentifier,
 } from "vscode-languageclient/node";
 
 let client: LanguageClient | null;
 
-interface CursorPositionParams extends TextDocumentPositionParams {
+interface CursorPosition {
+  position: Position;
   range?: Range;
+}
+
+interface CursorPositionParams {
+  textDocument: TextDocumentIdentifier;
+  cursors: CursorPosition[];
 }
 
 interface ConnectResponse {
@@ -69,29 +76,24 @@ function sendCursorPosition() {
     return;
   }
 
-  // FIXME send multiple cursors
-  if (editor.selection.isEmpty) {
-    // the Position object gives you the line and character where the cursor is
-    const position = editor.selection.active;
-    const params = client.code2ProtocolConverter.asTextDocumentPositionParams(
-      editor.document,
-      position
-    );
-    client.sendNotification("experimental/cursor", params);
-  } else {
-    editor.selection.start;
-    const position = editor.selection.active;
-    const params: CursorPositionParams =
-      client.code2ProtocolConverter.asTextDocumentPositionParams(
-        editor.document,
-        position
-      );
-    params.range = {
-      start: editor.selection.start,
-      end: editor.selection.end,
+  const params: CursorPositionParams = {
+    textDocument: client.code2ProtocolConverter.asTextDocumentIdentifier(
+      editor.document
+    ),
+    cursors: [],
+  };
+  for (const selection of editor.selections) {
+    const curpos: CursorPosition = {
+      position: client.code2ProtocolConverter.asWorkerPosition(
+        selection.active
+      ),
     };
-    client.sendNotification("experimental/cursor", params);
+    if (!selection.isEmpty) {
+      curpos.range = client.code2ProtocolConverter.asRange(selection);
+    }
+    params.cursors.push(curpos);
   }
+  client.sendNotification("experimental/cursor", params);
 }
 
 function startCommand(_context: vscode.ExtensionContext): Promise<void> {
@@ -101,9 +103,10 @@ function startCommand(_context: vscode.ExtensionContext): Promise<void> {
   }
   const config = vscode.workspace.getConfiguration("pair-ls");
   const exe = config.get<string>("executable", "pair-ls");
-  const flags = config.get<string[]>("flags");
-  console.log(exe);
-  console.log(flags);
+  const flags = config
+    .get<string>("flags", "lsp")
+    .split(" ")
+    .filter((t) => t !== "");
   const serverOptions: ServerOptions = {
     command: exe,
     args: flags,
@@ -122,7 +125,7 @@ function startCommand(_context: vscode.ExtensionContext): Promise<void> {
   client.registerFeature(new CursorFeature(client));
 
   client.start();
-  return client.onReady();
+  return client.onReady().then(sendCursorPosition);
 }
 
 async function getOrStartClient(

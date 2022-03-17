@@ -44,15 +44,8 @@
           "description": "Path to the pair-ls executable"
         },
         "pair-ls.flags": {
-          "type": "array",
-          "default": [
-            "lsp",
-            "-port",
-            "8080"
-          ],
-          "items": {
-            "type": "string"
-          },
+          "type": "string",
+          "default": "lsp -port 8080",
           "description": "Command line flags to pass to pair-ls"
         }
       }
