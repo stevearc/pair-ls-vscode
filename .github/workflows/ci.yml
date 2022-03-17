@@ -72,7 +72,7 @@ jobs:
       - run: npx vsce package --target ${{ env.target }}
       - uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.target }}
+          name: ${{ env.target }}.zip
           path: "*.vsix"
   publish:
     name: Create release and publish
@@ -81,6 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v2
+      - run: unzip *.zip
       - run: ls *.vsix
       # - run: npx vsce publish --packagePath $(find . -iname *.vsix)
       #   env:
