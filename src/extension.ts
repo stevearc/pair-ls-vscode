@@ -54,19 +54,25 @@ export class CursorFeature implements StaticFeature {
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
-    vscode.commands.registerCommand("pair-ls.start", startCommand)
+    vscode.commands.registerCommand("pair-ls.start", () =>
+      startCommand(context)
+    )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("pair-ls.stop", stopCommand)
+    vscode.commands.registerCommand("pair-ls.stop", () => stopCommand(context))
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("pair-ls.createToken", createTokenCommand)
+    vscode.commands.registerCommand("pair-ls.createToken", () =>
+      createTokenCommand(context)
+    )
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand("pair-ls.connectToken", connectTokenCommand)
+    vscode.commands.registerCommand("pair-ls.connectToken", () =>
+      connectTokenCommand(context)
+    )
   );
   context.subscriptions.push(
-    vscode.window.onDidChangeTextEditorSelection(function (e) {
+    vscode.window.onDidChangeTextEditorSelection(() => {
       sendCursorPosition();
     })
   );
@@ -108,7 +114,10 @@ async function startCommand(context: vscode.ExtensionContext): Promise<void> {
   if (platform === "win32") {
     dist = dist + ".exe";
   }
-  const exe = config.get<string>("executable", dist);
+  let exe = config.get<string>("executable", dist);
+  if (exe === "") {
+    exe = dist;
+  }
   const flags = config
     .get<string>("flags", "lsp")
     .split(" ")
