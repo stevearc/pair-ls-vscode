@@ -65,7 +65,7 @@ jobs:
         uses: suisei-cn/actions-download-file@v1
         with:
           url: https://github.com/stevearc/pair-ls/releases/download/${{ needs.test.outputs.pair_ls_version }}/${{ matrix.bin }}
-      - run: mv ${{ steps.download.outputs.filename }} pair-ls
+      - run: mv ${{ steps.download.outputs.filename }} pair-ls && chmod +x pair-ls
         if: matrix.platform != 'win32'
       - shell: pwsh
         run: echo "target=${{ matrix.platform }}-${{ matrix.arch }}" >> $env:GITHUB_ENV
