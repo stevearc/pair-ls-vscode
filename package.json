@@ -5,6 +5,14 @@
   "repository": "https://github.com/stevearc/pair-ls-vscode",
   "version": "0.0.1",
   "pair_ls_version": "nightly",
+  "publisher": "pair-ls",
+  "license": "MIT",
+  "keywords": [
+    "pair",
+    "programming",
+    "remote",
+    "pairing"
+  ],
   "engines": {
     "vscode": "^1.64.0"
   },
